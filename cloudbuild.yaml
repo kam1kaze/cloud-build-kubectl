@@ -1,0 +1,23 @@
+---
+timeout: 15m
+substitutions:
+  _IMAGE_NAME: kubectl
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args: [
+      '-c',
+      'docker pull eu.gcr.io/$PROJECT_ID/${_IMAGE_NAME}:latest || true'
+    ]
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build',
+      '-t', 'eu.gcr.io/$PROJECT_ID/${_IMAGE_NAME}:$SHORT_SHA',
+      '-t', 'eu.gcr.io/$PROJECT_ID/${_IMAGE_NAME}:latest',
+      '--cache-from', 'eu.gcr.io/$PROJECT_ID/${_IMAGE_NAME}:latest',
+      '.'
+    ]
+images: [
+  'eu.gcr.io/$PROJECT_ID/${_IMAGE_NAME}:$SHORT_SHA',
+  'eu.gcr.io/$PROJECT_ID/${_IMAGE_NAME}:latest'
+]
